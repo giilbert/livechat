@@ -24,5 +24,6 @@
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
     "@eslint/eslintrc": "^3"
-  }
+  },
+  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
 }

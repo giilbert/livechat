@@ -1,0 +1,11 @@
+[package]
+name = "server"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+maf = { git = "https://github.com/giilbert/maf" }
+serde = { version = "^1", features = ["derive"] }
+
+[lib]
+crate-type = ["cdylib"] # This is required for Cargo to build the library

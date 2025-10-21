@@ -30,6 +30,7 @@ export default function Home() {
   const liveUpdate = useRpc<Message>("live_update");
   const maf = useContext(MafContext);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [systemMessage, setSystemMessage] = useState<string | null>(null);
 
   if (!maf) throw new Error("MafContext is not available");
 
@@ -47,6 +48,18 @@ export default function Home() {
         "duck",
         "turkey",
         "donkey",
+        "horse",
+        "llama",
+        "alpaca",
+        "ostrich",
+        "emu",
+        "buffalo",
+        "bison",
+        "yak",
+        "reindeer",
+        "moose",
+        "kangaroo",
+        "wallaby",
       ];
       const randomName = `anonymous ${
         NAMES[Math.floor(Math.random() * NAMES.length)]
@@ -94,7 +107,7 @@ export default function Home() {
             chat.data.messages.map((msg, idx) => (
               <div key={idx} className="mb-2">
                 <span className="font-bold">{msg.name}: </span>
-                <span>{msg.content}</span>
+                <pre>{msg.content}</pre>
               </div>
             ))}
 
@@ -112,10 +125,24 @@ export default function Home() {
                 msg.content.length !== 0 && (
                   <div key={id} className="mb-2 opacity-50">
                     <span className="font-bold">{msg.name}: </span>
-                    <span>{msg.content}</span>
+                    <pre>
+                      {msg.content
+                        .split("\n")
+                        .slice(0, 5)
+                        .join("")
+                        .substring(0, 250)}
+                    </pre>
                   </div>
                 )
             )}
+
+          {systemMessage && (
+            <div className="my-2 p-2 bg-yellow-100 border border-yellow-300 rounded">
+              <span className="font-bold">system: </span>
+              <br />
+              <pre>{systemMessage}</pre>
+            </div>
+          )}
         </div>
         <textarea
           placeholder={
@@ -130,7 +157,8 @@ export default function Home() {
             setHasEdited(true);
 
             const text = e.currentTarget.value.trim();
-            liveUpdate.mutateAsync({ name, content: text });
+            if (!text.startsWith("/"))
+              liveUpdate.mutateAsync({ name, content: text });
 
             fitHeight(e.currentTarget);
           }}
@@ -141,6 +169,40 @@ export default function Home() {
 
               if (text.length === 0) {
                 return;
+              }
+
+              if (text.startsWith("/")) {
+                const parts = text.slice(1).split(" ");
+                const command = parts[0];
+                const args = parts.slice(1);
+
+                if (command === "help") {
+                  setSystemMessage(
+                    `available commands:
+/help - show this help message
+/name <new_name> - change your display name`
+                  );
+                } else if (command === "name") {
+                  if (args.length === 0) {
+                    setSystemMessage(`usage: /name <new_name>`);
+                  } else {
+                    const newName = args.join(" ");
+                    setName(newName);
+                    localStorage.setItem("name", newName);
+                    setSystemMessage(
+                      `your name has been changed to '${newName}'.`
+                    );
+                  }
+                } else {
+                  setSystemMessage(
+                    `unknown command '${command}'. type /help for a list of commands.`
+                  );
+                }
+
+                e.currentTarget.value = "";
+                return;
+              } else {
+                setSystemMessage(null);
               }
 
               send.mutateAsync({ name, content: text });

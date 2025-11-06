@@ -34,6 +34,17 @@ export default function Home() {
 
   if (!maf) throw new Error("MafContext is not available");
 
+  useEffect(() => {
+    const onDisconnect = () => {
+      maf.client.connect();
+    };
+
+    const unsubscribe = maf.client.on("close", onDisconnect);
+    return () => {
+      unsubscribe();
+    };
+  }, [maf.client]);
+
   useLayoutEffect(() => {
     const storedName = localStorage.getItem("name");
     if (storedName) {

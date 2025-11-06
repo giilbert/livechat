@@ -1,4 +1,4 @@
-name = "server"
+name = "livechat"
 rooms = "AutoCreate" # This will make MAF put all users in a single *room*
 
 # If your build output path is different, adjust the paths accordingly.

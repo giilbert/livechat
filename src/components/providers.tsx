@@ -12,8 +12,8 @@ export const Providers: React.FC<{
           ? "dev"
           : {
               type: "platform",
-              url: "https://maf-server.fly.dev",
-              app: "gilbert/server",
+              url: "https://onmaf.gilbertz.me",
+              app: "gilbert/livechat",
             }
       }
     >

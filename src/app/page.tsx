@@ -35,7 +35,16 @@ export default function Home() {
   if (!maf) throw new Error("MafContext is not available");
 
   useEffect(() => {
-    const onDisconnect = () => {
+    const onDisconnect = async () => {
+      setSystemMessage(
+        "disconnected from server due to inactivity. old messages were lost :c"
+      );
+      // wait for user to refocus the window
+      if (document.hidden) {
+        await new Promise<void>((resolve) => {
+          window.addEventListener("focus", () => resolve(), { once: true });
+        });
+      }
       maf.client.connect();
     };
 

@@ -24,12 +24,14 @@ import {
   FieldSet,
 } from "./field";
 import { Input } from "./input";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export const ChatList: React.FC = () => {
   const trpc = useTRPC();
   const query = useQuery(trpc.chat.list.queryOptions());
+  const params = useParams();
 
   return (
     <div>
@@ -71,10 +73,18 @@ export const ChatList: React.FC = () => {
       {query.status === "success" && query.data.length > 0 && (
         <ul className="mt-4 flex flex-col gap-2">
           {query.data.map((chat) => (
-            <li key={chat.id}>
+            <li
+              key={chat.id}
+              className={chat.id === params.chatId ? "font-semibold" : ""}
+            >
               <Link
                 href={`/chat/${chat.id}`}
-                className="block -mx-3 px-3 py-1.5 hover:bg-accent hover:text-accent-foreground transition-colors"
+                className={cn(
+                  "block -mx-3 px-3 py-1.5 hover:bg-accent hover:text-accent-foreground transition-colors",
+                  chat.id === params.chatId
+                    ? "bg-accent dark:bg-accent/40 text-accent-foreground"
+                    : ""
+                )}
               >
                 {chat.name}
               </Link>

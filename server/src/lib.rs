@@ -3,14 +3,14 @@ use std::collections::{HashMap, VecDeque};
 use maf::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, schemars::JsonSchema)]
 struct Message {
     name: String,
     content: String,
 }
 
 const MAX_MESSAGES: usize = 500;
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, schemars::JsonSchema)]
 struct ChatStore {
     messages: VecDeque<Message>,
     live: HashMap<String, Message>,

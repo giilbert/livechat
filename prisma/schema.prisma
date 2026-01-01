@@ -1,0 +1,106 @@
+generator client {
+    provider = "prisma-client"
+    output   = "../generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+model User {
+    id            String       @id
+    name          String
+    email         String
+    emailVerified Boolean
+    image         String?
+    createdAt     DateTime
+    updatedAt     DateTime
+    sessions      Session[]
+    accounts      Account[]
+    chats         ChatMember[]
+    lastChatId    String?
+    lastChat      Chat?        @relation(fields: [lastChatId], references: [id])
+
+    @@unique([email])
+    @@map("user")
+}
+
+model Session {
+    id        String   @id
+    expiresAt DateTime
+    token     String
+    createdAt DateTime
+    updatedAt DateTime
+    ipAddress String?
+    userAgent String?
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([token])
+    @@index([userId])
+    @@map("session")
+}
+
+model Account {
+    id                    String    @id
+    accountId             String
+    providerId            String
+    userId                String
+    user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    accessToken           String?
+    refreshToken          String?
+    idToken               String?
+    accessTokenExpiresAt  DateTime?
+    refreshTokenExpiresAt DateTime?
+    scope                 String?
+    password              String?
+    createdAt             DateTime
+    updatedAt             DateTime
+
+    @@index([userId])
+    @@map("account")
+}
+
+model Verification {
+    id         String    @id
+    identifier String
+    value      String
+    expiresAt  DateTime
+    createdAt  DateTime?
+    updatedAt  DateTime?
+
+    @@index([identifier])
+    @@map("verification")
+}
+
+model Chat {
+    id            String       @id @default(cuid())
+    name          String
+    members       ChatMember[]
+    messages      Message[]
+    lastChatUsers User[]
+}
+
+model ChatMember {
+    chatId   String
+    chat     Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+    userId   String
+    user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    isAdmin  Boolean   @default(false)
+    messages Message[]
+
+    @@id([chatId, userId])
+    @@index([chatId])
+    @@index([userId])
+}
+
+model Message {
+    id        String   @id @default(cuid())
+    content   String
+    createdAt DateTime @default(now())
+
+    chatId   String
+    chat     Chat       @relation(fields: [chatId], references: [id], onDelete: Cascade)
+    senderId String
+    sender   ChatMember @relation(fields: [chatId, senderId], references: [chatId, userId])
+}

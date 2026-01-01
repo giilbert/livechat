@@ -1,23 +1,14 @@
 "use client";
 
-import { MafProvider } from "@usemaf/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
 
-export const Providers: React.FC<{
+export const GlobalProviders: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
+  const [queryClient] = useState(() => new QueryClient());
+
   return (
-    <MafProvider
-      server={
-        process.env.NODE_ENV === "development"
-          ? "dev"
-          : {
-              type: "platform",
-              url: "https://onmaf.gilbertz.me",
-              app: "gilbert/livechat",
-            }
-      }
-    >
-      {children}
-    </MafProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 };

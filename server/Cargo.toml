@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-maf = { git = "https://github.com/giilbert/maf" }
+schemars = "1.2.0"
+maf = { version = "0.1.0-alpha.6", features = ["typed"] }
 serde = { version = "^1", features = ["derive"] }
 
 [lib]

@@ -1,0 +1,9 @@
+services:
+  db:
+    image: postgres:18
+    environment:
+      - POSTGRES_USER=prisma
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=livechat
+    ports:
+      - "5432:5432"

@@ -1,5 +1,6 @@
 import { SignInButton, SignOutButton } from "@/components/auth";
 import { ChatList } from "@/components/chat-list";
+import { ModeToggle } from "@/components/theme";
 import { getSession } from "@/lib/auth-server";
 import { HydrateClient, trpcServer } from "@/server/server";
 import { redirect } from "next/navigation";
@@ -24,9 +25,10 @@ export default async function Home() {
                 Signed in as{" "}
                 <span className="font-semibold">{session.user.name}</span>
               </p>
-              <SignOutButton size="sm" variant="secondary" className="ml-auto">
+              <SignOutButton variant="secondary" className="ml-auto">
                 Sign Out
               </SignOutButton>
+              <ModeToggle />
             </footer>
           </div>
         ) : (

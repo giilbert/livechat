@@ -74,7 +74,7 @@ export const ChatList: React.FC = () => {
             <li key={chat.id}>
               <Link
                 href={`/chat/${chat.id}`}
-                className="block -mx-3 px-3 py-1.5 hover:bg-accent/50 hover:text-accent-foreground transition-colors"
+                className="block -mx-3 px-3 py-1.5 hover:bg-accent hover:text-accent-foreground transition-colors"
               >
                 {chat.name}
               </Link>

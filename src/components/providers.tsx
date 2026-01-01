@@ -11,6 +11,7 @@ import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCContext } from "@trpc/tanstack-react-query";
 import assert from "node:assert";
 import type { AppRouter } from "@/server/routes/router";
+import { ThemeProvider } from "./theme";
 
 export function makeQueryClient() {
   return new QueryClient({
@@ -89,7 +90,14 @@ export const GlobalProviders: React.FC<{
   return (
     <QueryClientProvider client={queryClient}>
       <TRPCProvider queryClient={queryClient} trpcClient={trpcClient}>
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </TRPCProvider>
     </QueryClientProvider>
   );

@@ -5,7 +5,9 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Button } from "./button";
 
-export const SignInButton: React.FC = () => {
+export const SignInButton: React.FC<React.ComponentProps<typeof Button>> = (
+  props
+) => {
   const signIn = useMutation({
     mutationKey: ["sign-in"],
     mutationFn: async () => {
@@ -17,18 +19,20 @@ export const SignInButton: React.FC = () => {
 
   return (
     <Button
-      className="w-full"
       onClick={() => {
         signIn.mutate();
       }}
       isLoading={signIn.isPending || signIn.isSuccess}
+      {...props}
     >
-      sign in
+      {props.children}
     </Button>
   );
 };
 
-export const SignOutButton: React.FC = () => {
+export const SignOutButton: React.FC<React.ComponentProps<typeof Button>> = (
+  props
+) => {
   const router = useRouter();
   const signOut = useMutation({
     mutationKey: ["sign-out"],
@@ -40,13 +44,13 @@ export const SignOutButton: React.FC = () => {
 
   return (
     <Button
-      className="w-full"
       onClick={() => {
         signOut.mutate();
       }}
       isLoading={signOut.isPending || signOut.isSuccess}
+      {...props}
     >
-      sign out
+      {props.children}
     </Button>
   );
 };

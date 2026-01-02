@@ -59,7 +59,6 @@ async fn on_connect(user: User) {
     println!("user connected! id: {}", user.meta().id());
 }
 
-// Declare what the MAF application should do
 fn build() -> App {
     App::builder()
         .on_connect(on_connect)

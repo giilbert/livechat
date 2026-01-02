@@ -71,12 +71,9 @@ export const ChatList: React.FC = () => {
       </div>
 
       {query.status === "success" && query.data.length > 0 && (
-        <ul className="mt-4 flex flex-col gap-2">
+        <ul className="mt-4 flex flex-col gap-0.5">
           {query.data.map((chat) => (
-            <li
-              key={chat.id}
-              className={chat.id === params.chatId ? "font-semibold" : ""}
-            >
+            <li key={chat.id}>
               <Link
                 href={`/chat/${chat.id}`}
                 className={cn(

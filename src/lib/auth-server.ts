@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./db";
 import assert from "node:assert";
 import { headers } from "next/headers";
+import { cache } from "react";
 
 const BETTER_AUTH_URL = process.env.BETTER_AUTH_URL;
 assert(

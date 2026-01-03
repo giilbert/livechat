@@ -11,7 +11,8 @@ function handler({ request }: { request: Request }) {
     createContext: () => createContext(request),
     endpoint: "/api/trpc",
     onError({ error }) {
-      console.error(chalk.bold.red("[trpc]"), error);
+      if (error.code === "INTERNAL_SERVER_ERROR")
+        console.error(chalk.bold.red("[trpc]"), error);
     },
   });
 }

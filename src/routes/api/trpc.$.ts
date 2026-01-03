@@ -3,6 +3,7 @@ import { appRouter } from "@/server/trpc/routes";
 import { createContext } from "@/server/trpc/trpc-context";
 import { createFileRoute } from "@tanstack/react-router";
 import chalk from "chalk";
+import { TRPCError } from "@trpc/server";
 
 function handler({ request }: { request: Request }) {
   return fetchRequestHandler({
@@ -10,8 +11,8 @@ function handler({ request }: { request: Request }) {
     router: appRouter,
     createContext: () => createContext(request),
     endpoint: "/api/trpc",
-    onError({ error }) {
-      if (error.code === "INTERNAL_SERVER_ERROR")
+    onError({ error }: { error: unknown }) {
+      if (error instanceof TRPCError && error.code === "INTERNAL_SERVER_ERROR")
         console.error(chalk.bold.red("[trpc]"), error);
     },
   });

@@ -1,4 +1,4 @@
-import { auth } from "@/server/auth";
+import { authServer } from "@/server/auth-server";
 import {
   createTRPCMiddleware,
   publicProcedure,
@@ -6,7 +6,7 @@ import {
 import { TRPCError } from "@trpc/server";
 
 export const extractAuth = createTRPCMiddleware(async ({ ctx, next }) => {
-  const session = await auth.api.getSession({
+  const session = await authServer.api.getSession({
     headers: ctx.request.headers,
   });
 

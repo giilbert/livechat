@@ -1,39 +1,32 @@
+import { SignInButton } from "@/components/auth";
+import { InfoView } from "@/components/info-view";
+import { useSession } from "@/lib/auth-client";
 import { createFileRoute } from "@tanstack/react-router";
-import logo from "../logo.svg";
 
 export const Route = createFileRoute("/")({
   component: App,
+  loader: async ({ context }) => {
+    await context.queryClient.prefetchQuery(
+      context.trpc.chat.list.queryOptions()
+    );
+  },
 });
 
 function App() {
+  const session = useSession();
+
   return (
-    <div className="text-center">
-      <header className="min-h-screen flex flex-col items-center justify-center bg-[#282c34] text-white text-[calc(10px+2vmin)]">
-        <img
-          src={logo}
-          className="h-[40vmin] pointer-events-none animate-[spin_20s_linear_infinite]"
-          alt="logo"
-        />
-        <p>
-          Edit <code>src/routes/index.tsx</code> and save to reload.
-        </p>
-        <a
-          className="text-[#61dafb] hover:underline"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <a
-          className="text-[#61dafb] hover:underline"
-          href="https://tanstack.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn TanStack
-        </a>
-      </header>
+    <div className="w-full flex p-4 pt-6 flex-col items-center h-screen">
+      {session ? (
+        <div className="w-full h-full max-w-xl">
+          <InfoView />
+        </div>
+      ) : (
+        <div className="flex flex-col items-center gap-2 h-full justify-center">
+          <p>A chat app for the slow typers and the impatient</p>
+          <SignInButton className="w-full">Sign In!</SignInButton>
+        </div>
+      )}
     </div>
   );
 }

@@ -6,13 +6,14 @@ import {
 import superjson from "superjson";
 import { createTRPCContext } from "@trpc/tanstack-react-query";
 import { isomorphicHeaders } from "@/lib/get-isomorphic-headers.ts";
+import { assertEnv } from "./utils";
 
 export const createTRPCClient = () =>
   _createTRPCClient<TRPCRouter>({
     links: [
       httpBatchStreamLink({
         transformer: superjson,
-        url: `${process.env.BASE_URL ?? ""}/api/trpc`,
+        url: `${assertEnv("VITE_APP_URL", import.meta.env.VITE_APP_URL)}/api/trpc`,
         headers: async () => isomorphicHeaders(),
       }),
     ],

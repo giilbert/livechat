@@ -1,8 +1,11 @@
 import { createAuthClient } from "better-auth/react";
-import { mutationOptions } from "@tanstack/react-query";
+import { mutationOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { redirect } from "@tanstack/react-router";
+import { assertEnv } from "./utils";
+import { useTRPC } from "./trpc-client";
 
 export const authClient = createAuthClient({
-  baseURL: process.env.APP_URL,
+  baseURL: assertEnv("VITE_APP_URL", import.meta.env.VITE_APP_URL),
 });
 
 export const signInOptions = mutationOptions({
@@ -32,3 +35,19 @@ export const signOutOptions = mutationOptions({
     client.invalidateQueries();
   },
 });
+
+export const useSession = () => {
+  const trpc = useTRPC();
+  const query = useSuspenseQuery(trpc.getSession.queryOptions());
+  if (query.status === "error") {
+    console.warn("error fetching session", query.error);
+    throw query.error;
+  }
+  return query.data;
+};
+
+export const useAssertedSession = () => {
+  const session = useSession();
+  if (!session) throw redirect({ to: "/" });
+  return session;
+};

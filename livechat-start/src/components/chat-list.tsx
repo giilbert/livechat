@@ -4,7 +4,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PlusIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTRPC } from "./providers";
 import { Button } from "./button";
 import {
   Dialog,
@@ -14,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./dialog";
-import { createChatSchema } from "@/lib/schemas";
+import { createChatSchema } from "../lib/schemas";
 import {
   Field,
   FieldDescription,
@@ -24,26 +23,20 @@ import {
   FieldSet,
 } from "./field";
 import { Input } from "./input";
-import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/utils";
+import { useTRPC } from "@/lib/trpc-client";
+import { Link, useRouter } from "@tanstack/react-router";
 
-export const ChatList: React.FC = () => {
+export const ChatList: React.FC<{
+  selectedChatId?: string;
+}> = ({ selectedChatId }) => {
   const trpc = useTRPC();
   const query = useQuery(trpc.chat.list.queryOptions());
-  const params = useParams();
 
   return (
-    <div>
+    <div className="space-y-4">
       <div className="flex gap-2">
-        {query.status === "pending" && <p>Loading chats...</p>}
-        {query.status === "success" && query.data.length === 0 ? (
-          <p className="text-muted-foreground">
-            No chats yet. Start a chat or get invited to one!
-          </p>
-        ) : (
-          <h2 className="font-semibold">Your Chats</h2>
-        )}
+        <h2 className="font-semibold">Your Chats</h2>
 
         <Dialog>
           <DialogTrigger asChild>
@@ -70,15 +63,27 @@ export const ChatList: React.FC = () => {
         </Dialog>
       </div>
 
+      {query.status === "pending" && <p className="pt-1.5">Loading chats...</p>}
+      {query.status === "error" && (
+        <p className="text-destructive pt-1.5">Error loading chats</p>
+      )}
+
+      {query.status === "success" && query.data.length === 0 && (
+        <p className="text-muted-foreground pt-1.5">
+          No chats yet. Start a chat or get invited to one!
+        </p>
+      )}
+
       {query.status === "success" && query.data.length > 0 && (
-        <ul className="mt-4 flex flex-col gap-0.5">
+        <ul className="flex flex-col gap-0.5">
           {query.data.map((chat) => (
             <li key={chat.id}>
               <Link
-                href={`/chat/${chat.id}`}
+                to="/chat/$chatId"
+                params={{ chatId: chat.id }}
                 className={cn(
                   "block -mx-3 px-3 py-1.5 hover:bg-accent hover:text-accent-foreground transition-colors",
-                  chat.id === params.chatId
+                  chat.id === selectedChatId
                     ? "bg-accent dark:bg-accent/40 text-accent-foreground"
                     : ""
                 )}
@@ -100,11 +105,7 @@ const CreateChatForm: React.FC = () => {
   });
   const qc = useQueryClient();
   const trpc = useTRPC();
-  const createChat = useMutation(
-    trpc.chat.create.mutationOptions({
-      onSuccess() {},
-    })
-  );
+  const createChat = useMutation(trpc.chat.create.mutationOptions());
   const router = useRouter();
 
   const errors = form.formState.errors;
@@ -117,7 +118,10 @@ const CreateChatForm: React.FC = () => {
       onSubmit={form.handleSubmit(async (values) => {
         const newChat = await createChat.mutateAsync(values);
         await qc.refetchQueries({ queryKey: trpc.chat.list.queryKey() });
-        router.push(`/chat/${newChat.id}`);
+        router.navigate({
+          to: "/chat/$chatId",
+          params: { chatId: newChat },
+        });
       })}
     >
       <FieldSet>

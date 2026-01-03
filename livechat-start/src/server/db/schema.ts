@@ -1,4 +1,9 @@
-import { integer, sqliteTable } from "drizzle-orm/sqlite-core";
+import {
+  index,
+  integer,
+  primaryKey,
+  sqliteTable,
+} from "drizzle-orm/sqlite-core";
 import { createId } from "@paralleldrive/cuid2";
 import { text } from "drizzle-orm/sqlite-core";
 
@@ -67,3 +72,51 @@ export const verification = sqliteTable("verification", {
   createdAt: integer("created_at", { mode: "timestamp" }),
   updatedAt: integer("updated_at", { mode: "timestamp" }),
 });
+
+export const chat = sqliteTable("chat", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  name: text("name").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
+export const chatMember = sqliteTable(
+  "chat_member",
+  {
+    chatId: text("chat_id")
+      .notNull()
+      .references(() => chat.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    isAdmin: integer("is_admin", { mode: "boolean" }).notNull().default(false),
+  },
+  (table) => [
+    primaryKey({ columns: [table.chatId, table.userId] }),
+    index("idx_chat_member_chat_id").on(table.chatId),
+    index("idx_chat_member_user_id").on(table.userId),
+  ]
+);
+
+export const message = sqliteTable(
+  "message",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    content: text("content").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+    chatId: text("chat_id")
+      .notNull()
+      .references(() => chat.id, { onDelete: "cascade" }),
+    senderChatId: text("sender_chat_id").notNull(),
+    senderUserId: text("sender_user_id").notNull(),
+  },
+  (table) => [
+    index("idx_message_chat_id").on(table.chatId),
+    index("idx_message_sender").on(table.senderChatId, table.senderUserId),
+  ]
+);

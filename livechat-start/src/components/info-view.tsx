@@ -1,11 +1,11 @@
 import { SignOutButton } from "@/components/auth";
 import { ChatList } from "@/components/chat-list";
 import { ModeToggle } from "@/components/theme";
-import { getSession } from "@/lib/auth-server";
+import { useAssertedSession } from "@/lib/auth-client";
 
-export const InfoView: React.FC<{
-  session: NonNullable<Awaited<ReturnType<typeof getSession>>>;
-}> = ({ session }) => {
+export const InfoView: React.FC = () => {
+  const session = useAssertedSession();
+
   return (
     <div className="flex flex-col gap-2 w-full h-full">
       <ChatList />

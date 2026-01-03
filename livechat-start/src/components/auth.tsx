@@ -1,21 +1,14 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
+import { signInOptions, signOutOptions } from "@/lib/auth-client";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { Button } from "./button";
+import { useRouter } from "@tanstack/react-router";
 
 export const SignInButton: React.FC<React.ComponentProps<typeof Button>> = (
   props
 ) => {
-  const signIn = useMutation({
-    mutationKey: ["sign-in"],
-    mutationFn: async () => {
-      return await authClient.signIn.social({
-        provider: "google",
-      });
-    },
-  });
+  const signIn = useMutation(signInOptions);
 
   return (
     <Button
@@ -34,18 +27,16 @@ export const SignOutButton: React.FC<React.ComponentProps<typeof Button>> = (
   props
 ) => {
   const router = useRouter();
-  const signOut = useMutation({
-    mutationKey: ["sign-out"],
-    mutationFn: async () => {
-      await authClient.signOut();
-      router.refresh();
-    },
-  });
+  const signOut = useMutation(signOutOptions);
 
   return (
     <Button
       onClick={() => {
-        signOut.mutate();
+        signOut.mutate(undefined, {
+          onSuccess() {
+            router.navigate({ to: "/" });
+          },
+        });
       }}
       isLoading={signOut.isPending || signOut.isSuccess}
       {...props}

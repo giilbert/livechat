@@ -10,20 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ChatChatIdRouteImport } from './routes/chat.$chatId'
 import { Route as ApiHealthcheckRouteImport } from './routes/api/healthcheck'
-import { Route as ChatChatIdIndexRouteImport } from './routes/chat.$chatId.index'
-import { Route as ApiTrpcSplatRouteImport } from './routes/api/trpc.$'
+import { Route as ChatChatIdRouteImport } from './routes/chat.$chatId'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
+import { Route as ApiTrpcSplatRouteImport } from './routes/api/trpc.$'
+import { Route as ChatChatIdIndexRouteImport } from './routes/chat.$chatId.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChatChatIdRoute = ChatChatIdRouteImport.update({
-  id: '/chat/$chatId',
-  path: '/chat/$chatId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHealthcheckRoute = ApiHealthcheckRouteImport.update({
@@ -31,20 +26,25 @@ const ApiHealthcheckRoute = ApiHealthcheckRouteImport.update({
   path: '/api/healthcheck',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ChatChatIdIndexRoute = ChatChatIdIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => ChatChatIdRoute,
-} as any)
-const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
-  id: '/api/trpc/$',
-  path: '/api/trpc/$',
+const ChatChatIdRoute = ChatChatIdRouteImport.update({
+  id: '/chat/$chatId',
+  path: '/chat/$chatId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
+  id: '/api/trpc/$',
+  path: '/api/trpc/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatChatIdIndexRoute = ChatChatIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ChatChatIdRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -109,13 +109,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/chat/$chatId': {
-      id: '/chat/$chatId'
-      path: '/chat/$chatId'
-      fullPath: '/chat/$chatId'
-      preLoaderRoute: typeof ChatChatIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/healthcheck': {
       id: '/api/healthcheck'
       path: '/api/healthcheck'
@@ -123,18 +116,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiHealthcheckRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/chat/$chatId/': {
-      id: '/chat/$chatId/'
-      path: '/'
-      fullPath: '/chat/$chatId/'
-      preLoaderRoute: typeof ChatChatIdIndexRouteImport
-      parentRoute: typeof ChatChatIdRoute
-    }
-    '/api/trpc/$': {
-      id: '/api/trpc/$'
-      path: '/api/trpc/$'
-      fullPath: '/api/trpc/$'
-      preLoaderRoute: typeof ApiTrpcSplatRouteImport
+    '/chat/$chatId': {
+      id: '/chat/$chatId'
+      path: '/chat/$chatId'
+      fullPath: '/chat/$chatId'
+      preLoaderRoute: typeof ChatChatIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
@@ -143,6 +129,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/api/trpc/$': {
+      id: '/api/trpc/$'
+      path: '/api/trpc/$'
+      fullPath: '/api/trpc/$'
+      preLoaderRoute: typeof ApiTrpcSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat/$chatId/': {
+      id: '/chat/$chatId/'
+      path: '/'
+      fullPath: '/chat/$chatId/'
+      preLoaderRoute: typeof ChatChatIdIndexRouteImport
+      parentRoute: typeof ChatChatIdRoute
     }
   }
 }

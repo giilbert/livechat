@@ -21,6 +21,9 @@ export const user = sqliteTable("user", {
   image: text("image"),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+  lastChatId: text("last_chat_id").references(() => chat.id, {
+    onDelete: "set null",
+  }),
 });
 
 export const session = sqliteTable("session", {
@@ -98,7 +101,7 @@ export const chatMember = sqliteTable(
     primaryKey({ columns: [table.chatId, table.userId] }),
     index("idx_chat_member_chat_id").on(table.chatId),
     index("idx_chat_member_user_id").on(table.userId),
-  ]
+  ],
 );
 
 export const message = sqliteTable(
@@ -118,5 +121,5 @@ export const message = sqliteTable(
   (table) => [
     index("idx_message_chat_id").on(table.chatId),
     index("idx_message_sender").on(table.senderChatId, table.senderUserId),
-  ]
+  ],
 );
